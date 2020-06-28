@@ -1,13 +1,13 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
-require("dotenv");
+require("dotenv").config();
 require("console.table");
 
 const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: process.env.password,
+  password: process.env.DB_PASS,
   database: "employees_db",
 });
 
@@ -47,5 +47,38 @@ function display() {
         default:
           connection.end;
       }
+    });
+}
+
+function addRole() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "title",
+      },
+      {
+        type: "input",
+        name: "salary",
+      },
+      {
+        type: "list",
+        name: "department_id",
+        choices: [1, 2, 3],
+      },
+    ])
+    .then(function (userData) {
+      connection.query(
+        "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);",
+        [userData.title, userData.salary, userData.department_id],
+        function (err, data) {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          console.log("role updated");
+          display();
+        }
+      );
     });
 }
