@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
   database: "employees_db",
 });
 
-connection.connect(function (err) {
+connection.connect((err) => {
   if (err) {
     console.log("error connecting to database", err);
   } else {
@@ -19,7 +19,7 @@ connection.connect(function (err) {
   }
 });
 
-function display() {
+const display = () => {
   inquirer
     .prompt([
       {
@@ -39,53 +39,34 @@ function display() {
         name: "navigation",
       },
     ])
-    .then(function (userChoice) {
+    .then((userChoice) => {
       switch (userChoice.navigation) {
         case "add department":
           addDepartment();
           break;
-        default:
-          connection.end;
-      }
-      switch (userChoice.navigation) {
         case "add role":
           addRole();
           break;
-        default:
-          connection.end;
-      }
-      switch (userChoice.navigation) {
         case "add employee":
           addEmployee();
           break;
-        default:
-          connection.end;
-      }
-      switch (userChoice.navigation) {
         case "view all departments":
           viewDepartments();
           break;
-        default:
-          connection.end;
-      }
-      switch (userChoice.navigation) {
         case "view all roles":
           viewRoles();
           break;
-        default:
-          connection.end;
-      }
-      switch (userChoice.navigation) {
         case "view all employees":
           viewEmployees();
           break;
         default:
           connection.end;
+          process.exit(0);
       }
     });
-}
+};
 
-function addDepartment() {
+const addDepartment = () => {
   inquirer
     .prompt([
       {
@@ -93,11 +74,11 @@ function addDepartment() {
         name: "name",
       },
     ])
-    .then(function (res) {
+    .then((res) => {
       connection.query(
         "INSERT INTO department (name) VALUES (?);",
         [res.name],
-        function (err, data) {
+        (err, data) => {
           if (err) {
             console.log(err);
             throw err;
@@ -107,9 +88,9 @@ function addDepartment() {
         }
       );
     });
-}
+};
 
-function addRole() {
+const addRole = () => {
   inquirer
     .prompt([
       {
@@ -125,11 +106,11 @@ function addRole() {
         name: "department_id",
       },
     ])
-    .then(function (res) {
+    .then((res) => {
       connection.query(
         "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);",
         [res.title, res.salary, res.department_id],
-        function (err, data) {
+        (err, data) => {
           if (err) {
             console.log(err);
             throw err;
@@ -139,9 +120,9 @@ function addRole() {
         }
       );
     });
-}
+};
 
-function addEmployee() {
+const addEmployee = () => {
   inquirer
     .prompt([
       {
@@ -161,11 +142,11 @@ function addEmployee() {
         name: "manager_id",
       },
     ])
-    .then(function (res) {
+    .then((res) => {
       connection.query(
         "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
         [res.first_name, res.last_name, res.role_id, res.manager_id],
-        function (err, data) {
+        (err, data) => {
           if (err) {
             console.log(err);
             throw err;
@@ -175,4 +156,25 @@ function addEmployee() {
         }
       );
     });
-}
+};
+
+const viewDepartments = () => {
+  connection.query("SELECT * FROM department", (error, data) => {
+    console.table(data);
+    display();
+  });
+};
+
+const viewRoles = () => {
+  connection.query("SELECT * FROM role", (error, data) => {
+    console.table(data);
+    display();
+  });
+};
+
+const viewEmployees = () => {
+  connection.query("SELECT * FROM employee", (error, data) => {
+    console.table(data);
+    display();
+  });
+};
