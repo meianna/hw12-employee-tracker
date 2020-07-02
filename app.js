@@ -32,6 +32,9 @@ const display = () => {
           "view all roles",
           "view all employees",
           "update employee role",
+          "delete department",
+          "delete role",
+          "delete employee",
           "exit application",
         ],
         name: "navigation",
@@ -59,6 +62,15 @@ const display = () => {
           break;
         case "update employee role":
           updateEmployee();
+          break;
+        case "delete department":
+          deleteDepartment();
+          break;
+        case "delete role":
+          deleteRole();
+          break;
+        case "delete employee":
+          deleteEmployee();
           break;
         default:
           connection.end();
@@ -202,6 +214,81 @@ const updateEmployee = () => {
             throw err;
           }
           console.log("employee role updated");
+          display();
+        }
+      );
+    });
+};
+
+const deleteDepartment = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "department_id",
+        message: "Enter department id to be deleted",
+      },
+    ])
+    .then(function (res) {
+      connection.query(
+        "DELETE FROM department WHERE id = ?;",
+        res.department_id,
+        (err, data) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          console.log("department deleted");
+          display();
+        }
+      );
+    });
+};
+
+const deleteRole = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "role_id",
+        message: "Enter role id to be deleted",
+      },
+    ])
+    .then(function (res) {
+      connection.query(
+        "DELETE FROM role WHERE id = ?;",
+        res.role_id,
+        (err, data) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          console.log("role deleted");
+          display();
+        }
+      );
+    });
+};
+
+const deleteEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "employee_id",
+        message: "Enter employee id to be deleted",
+      },
+    ])
+    .then(function (res) {
+      connection.query(
+        "DELETE FROM employee WHERE id = ?;",
+        res.employee_id,
+        (err, data) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          console.log("employee deleted");
           display();
         }
       );
