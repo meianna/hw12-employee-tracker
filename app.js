@@ -31,9 +31,7 @@ const display = () => {
           "view all departments",
           "view all roles",
           "view all employees",
-          "update departments",
-          "update role",
-          "update employees",
+          "update employee role",
           "exit application",
         ],
         name: "navigation",
@@ -59,8 +57,11 @@ const display = () => {
         case "view all employees":
           viewEmployees();
           break;
+        case "update employee role":
+          updateEmployee();
+          break;
         default:
-          connection.end;
+          connection.end();
           process.exit(0);
       }
     });
@@ -177,4 +178,32 @@ const viewEmployees = () => {
     console.table(data);
     display();
   });
+};
+
+const updateEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "employee_id",
+      },
+      {
+        type: "input",
+        name: "new_role_id",
+      },
+    ])
+    .then(function (res) {
+      connection.query(
+        "UPDATE employee SET role_id = ? WHERE id = ?;",
+        [res.new_role_id, res.employee_id],
+        (err, data) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          console.log("employee role updated");
+          display();
+        }
+      );
+    });
 };
